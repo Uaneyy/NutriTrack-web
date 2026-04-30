@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NutriTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#080c10">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+<!-- ===== TOAST CONTAINER ===== -->
+<div id="toast-container" class="toast-container"></div>
+<!-- ===== CINEMATIC LOADING OVERLAY ===== -->
+<div id="loadingOverlay" class="loading-overlay hidden">
+  <div class="lo-bg"></div>
+  <div class="lo-grid"></div>
+  <div class="lo-content">
+    <div class="lo-logo">
+      <img src="logo.png" alt="logo">
+    </div>
+    <div class="lo-title">Menganalisis Data<span class="lo-dots"><span>.</span><span>.</span><span>.</span></span></div>
+    <div class="lo-bar-wrap">
+      <div class="lo-bar" id="loBar"></div>
+    </div>
+    <div class="lo-step" id="loStep">Menghitung BMR & TDEE...</div>
+    <div class="lo-counter" id="loCounter">0%</div>
+  </div>
+  <div class="lo-corner tl"></div>
+  <div class="lo-corner tr"></div>
+  <div class="lo-corner bl"></div>
+  <div class="lo-corner br"></div>
+</div>
+
+<div class="noise"></div>
+<div class="app">
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <img src="logo.png" alt="NutriTrack Logo">
+      </div>
+      <div>
+        <span class="logo-text">NutriTrack</span>
+        <div class="logo-sub">Personal Nutrition Planner</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button id="btnInstallPwa" style="display:none; background:var(--accent1); color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer; box-shadow:0 0 10px rgba(0,201,255,0.3);">⬇ INSTALL</button>
+      <div id="streakBadge" class="streak-badge">🔥 0</div>
+      <div class="header-badge">v2.0</div>
+    </div>
+  </header>
+
+  <!-- ===== SCREEN INPUT ===== -->
+  <div id="screen-input" class="screen">
+
+    <div class="section-label animate-enter" style="animation-delay:0.1s">DATA KAMU</div>
+    <div class="card form-card animate-enter" style="animation-delay:0.2s">
+
+      <div class="input-row">
+        <div class="input-group">
+          <label>Berat</label>
+          <div class="input-wrap">
+            <input id="berat" type="number" placeholder="70">
+            <span class="unit">kg</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Tinggi</label>
+          <div class="input-wrap">
+            <input id="tinggi" type="number" placeholder="170">
+            <span class="unit">cm</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Umur</label>
+          <div class="input-wrap">
+            <input id="umur" type="number" placeholder="25">
+            <span class="unit">thn</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="select-row">
+        <div class="select-group">
+          <label>Gender</label>
+          <div class="custom-select">
+            <select id="gender">
+              <option value="pria">♂ Pria</option>
+              <option value="wanita">♀ Wanita</option>
+            </select>
+            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="select-group">
+          <label>Aktivitas</label>
+          <div class="custom-select">
+            <select id="aktivitas">
+              <option value="rendah">🚶 Low</option>
+              <option value="sedang">🚴 Moderate</option>
+              <option value="tinggi">🏃 High</option>
+            </select>
+            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="select-group">
+          <label>Pekerjaan</label>
+          <div class="custom-select">
+            <select id="status">
+              <option value="umum">👤 Umum</option>
+              <option value="mahasiswa">🎓 Mahasiswa</option>
+            </select>
+            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIPE TUBUH VISUAL CARDS -->
+      <div class="body-type-label animate-enter" style="animation-delay:0.3s"><label>Tipe Tubuh</label></div>
+      <div class="body-type-grid animate-enter" style="animation-delay:0.4s" id="bodyTypeGrid">
+        <div class="body-type-card active" data-value="ectomorph" onclick="selectBodyType(this)">
+          <div class="bt-icon">🦴</div>
+          <div class="bt-name">Ektomorph</div>
+          <div class="bt-desc">Sulit naik berat, metabolisme cepat</div>
+        </div>
+        <div class="body-type-card" data-value="mesomorph" onclick="selectBodyType(this)">
+          <div class="bt-icon">💪</div>
+          <div class="bt-name">Mesomorph</div>
+          <div class="bt-desc">Proporsional, mudah beradaptasi</div>
+        </div>
+        <div class="body-type-card" data-value="endomorph" onclick="selectBodyType(this)">
+          <div class="bt-icon">🥑</div>
+          <div class="bt-name">Endomorph</div>
+          <div class="bt-desc">Mudah berlemak, metabolisme lambat</div>
+        </div>
+      </div>
+      <input type="hidden" id="tipe-tubuh" value="ectomorph">
+
+      <div class="target-row animate-enter" style="animation-delay:0.5s">
+        <label>Target</label>
+        <div class="toggle-group">
+          <input type="radio" id="turun" name="target" value="turun" checked>
+          <label for="turun" class="toggle-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            Turun Berat
+          </label>
+          <input type="radio" id="naik" name="target" value="naik">
+          <label for="naik" class="toggle-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            Naik Berat
+          </label>
+        </div>
+      </div>
+
+      <button class="btn-generate animate-enter" style="animation-delay:0.6s" onclick="proses()">
+        <span class="btn-text">Generate Plan</span>
+        <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+
+    </div>
+
+    <!-- TIPS CARD -->
+    <div class="section-label animate-enter" style="animation-delay:0.7s">TAHUKAH KAMU?</div>
+    <div class="card tips-card animate-enter" style="animation-delay:0.8s" id="tipsCard">
+      <div class="tips-icon">💡</div>
+      <div class="tips-text" id="tipsText">Loading tip...</div>
+    </div>
+
+  </div><!-- end screen-input -->
+
+  <!-- ===== SCREEN RESULT ===== -->
+  <div id="screen-result" class="screen hidden">
+    <div class="top-actions">
+      <button class="btn-back" onclick="kembali()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Kembali
+      </button>
+      <button class="btn-download" onclick="downloadPlan()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Simpan
+      </button>
+    </div>
+
+    <div id="hasil"></div>
+
+    <div class="section-label" style="margin-top:4px; display:flex; justify-content:space-between; align-items:center; padding-right:4px;">
+      <span>RIWAYAT BERAT</span>
+      <span style="cursor:pointer; color:var(--accent3); font-size:8px; display:flex; align-items:center; gap:3px; opacity:0.8; transition:opacity 0.2s;" onclick="resetChart()" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        RESET DATA
+      </span>
+    </div>
+    <div class="card chart-card">
+      <canvas id="chart"></canvas>
+      <div class="chart-empty" id="chartEmpty">Belum ada data. Generate plan untuk mulai.</div>
+    </div>
+  </div><!-- end screen-result -->
+
+</div>
+<script src="script.js"></script>
+</body>
+</html>
