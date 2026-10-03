@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Leaf, Flame, Bell, Moon, Sun, User, BarChart2, Lightbulb, UtensilsCrossed } from "lucide-react";
+
+import { Flame, Bell, Moon, Sun, User, BarChart2, Lightbulb, UtensilsCrossed } from "lucide-react";
 
 export type NavTab = "Dashboard" | "Nutrition" | "Progress" | "Insights";
 
@@ -16,10 +16,10 @@ interface HeaderProps {
 }
 
 const NAV_ITEMS: { label: NavTab; icon: typeof BarChart2 }[] = [
-  { label: "Dashboard",  icon: BarChart2 },
-  { label: "Nutrition",  icon: UtensilsCrossed },
-  { label: "Progress",   icon: BarChart2 },
-  { label: "Insights",   icon: Lightbulb },
+  { label: "Dashboard", icon: BarChart2 },
+  { label: "Nutrition", icon: UtensilsCrossed },
+  { label: "Progress", icon: BarChart2 },
+  { label: "Insights", icon: Lightbulb },
 ];
 
 export function Header({
