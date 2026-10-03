@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- Fonts: Poppins (heading) + Inter (body & numbers) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet" />
+
+    <!-- Title & Description -->
+    <title>NutriTrack — Rencana Makan Harianmu</title>
+    <meta name="description" content="Isi data fisik, dapat rencana makan dan target kalori harian yang dihitung khusus buat kamu." />
+    <meta name="application-name" content="NutriTrack" />
+    <meta name="author" content="NutriTrack" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Theme color (browser UI) -->
+    <meta name="theme-color" content="#14B8A6" />
+    <meta name="msapplication-TileColor" content="#14B8A6" />
+
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- iOS PWA full-screen support -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="NutriTrack" />
+
+    <!-- Open Graph (share preview) -->
+    <meta property="og:title" content="NutriTrack — Rencana Makan Harianmu" />
+    <meta property="og:description" content="Lacak nutrisi dan pola makan harian kamu secara teratur." />
+    <meta property="og:image" content="/icon-512.png" />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Register Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('[NutriTrack] Service Worker registered:', reg.scope))
+            .catch(err => console.warn('[NutriTrack] Service Worker registration failed:', err));
+        });
+      }
+    </script>
+  </body>
+</html>
