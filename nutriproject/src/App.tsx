@@ -781,9 +781,6 @@ export default function App() {
       setStreak(1);
       setHydration(0);
       setEatenMeals(new Set());
-      setAddedProtein(0);
-      setAddedCarbs(0);
-      setAddedFat(0);
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
